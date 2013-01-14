@@ -6,5 +6,5 @@ Initial install
 
 Modify if needed
 ================
-.Exports
-export TZ='Europe/Amsterdam'
+file: .Exports
+line: export TZ='Europe/Amsterdam'

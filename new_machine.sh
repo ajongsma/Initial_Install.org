@@ -27,6 +27,8 @@ cd ~/Github/
 git clone https://github.com/ajongsma/Initial_Install.git
 cd Initial_Install
 
+./install_iTerm2
+
 if [ ! -e .extra ] ; then
     cp .extra.dist .extra
     nano .extra

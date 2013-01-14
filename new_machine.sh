@@ -22,8 +22,10 @@ fi
 
 # https://github.com/roderik/dotfiles
 # https://github.com/mathiasbynens/dotfiles
-git clone https://roderik@github.com/roderik/dotfiles.git
-cd dotfiles
+mkdir ~/Github
+cd ~/Github/
+git clone https://github.com/ajongsma/Initial_Install.git
+cd Initial_Install
 
 if [ ! -e .extra ] ; then
     cp .extra.dist .extra
@@ -31,10 +33,10 @@ if [ ! -e .extra ] ; then
 else
     echo .xtra file found
 fi
-nano .osx
-./.osx
-./.brew
-./.iTerm2
+#nano .osx
+#./.osx
+#./.brew
+#./.iTerm2
 
-./bootstrap.sh
+#./bootstrap.sh
 

@@ -34,6 +34,7 @@ fi
 nano .osx
 ./.osx
 ./.brew
+./.iTerm2
 
 ./bootstrap.sh
 

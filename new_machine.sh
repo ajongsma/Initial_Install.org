@@ -118,6 +118,11 @@ nano .osx
 #./bootstrap.sh
 
 ###### TESTING - MACPORTS ###### START
+#cd ~/src
+#wget https://distfiles.macports.org/MacPorts/MacPorts-2.1.2-10.8-MountainLion.pkg
+# -> install MacPorts
+#sudo port selfupdate
+
 ## --- macports.org section ---
 #sudo port version>/dev/null
 #RETVAL=$?

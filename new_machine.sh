@@ -12,13 +12,15 @@ else
     echo Xcode found
 fi
 
-gcc_versionlong=`gcc --version`
-gcc_version=${gcc_versionlong:29:1}
-if [ $gcc_version -eq 4 ] ; then
-  echo gcc $gcc_version found
-else
-  echo gcc not found, please install the Xcode command line tools...
-fi
+# TESTING - require instead of specific chars
+require 'gcc'
+#gcc_versionlong=`gcc --version`
+#gcc_version=${gcc_versionlong:29:1}
+#if [ $gcc_version -eq 4 ] ; then
+#  echo gcc $gcc_version found
+#else
+#  echo gcc not found, please install the Xcode command line tools...
+#fi
 
 # https://github.com/roderik/dotfiles
 # https://github.com/mathiasbynens/dotfiles

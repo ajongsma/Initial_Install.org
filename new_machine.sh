@@ -1,3 +1,24 @@
+#!/usr/bin/env zsh
+
+successfully() {
+  $* || (echo "failed" 1>&2 && exit 1)
+}
+
+###### To test #######
+## Permissions
+#echo "Fixing permissions ..."
+#  successfully sudo chown -R `whoami` /usr/local
+
+## Add path to file
+#echo "Adding path SOFTWARE to file XXX ..."
+#  successfully echo "
+## recommended by brew doctor
+#export PATH='/usr/local/bin:$PATH'" >> ~/.zshenv
+#  successfully source ~/.zshenv
+
+
+###### Start install ######
+
 # install xcode via App Store first! It takes awhile
 # install the command-line tools as well
 

@@ -27,7 +27,11 @@ cd ~/Github/
 git clone https://github.com/ajongsma/Initial_Install.git
 cd Initial_Install
 
+#Install iTerm2
 ./install_iTerm2
+
+#Install broomed Ruby enviroment
+./install_rbenv
 
 if [ ! -e .extra ] ; then
     cp .extra.dist .extra

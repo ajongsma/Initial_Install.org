@@ -33,3 +33,23 @@ Sensible OS X defaults
 ================
 When setting up a new Mac, you may want to set some sensible OS X defaults:  
 ./.osx
+
+---
+
+Startup keys
+===
+http://support.apple.com/kb/HT1533?viewlocale=en_US&locale=en_US
+
+On an Apple Wireless Keyboard you might have to wait until the startup chime before holding the keys:
+- Option shows alternative startup volumes
+- Shift starts up in safe mode
+- C starts from an optical disk (CD)
+- T starts up in target disk mode
+- N attempts to start up from a NetBoot server
+- D (or ⌥D) opens Apple Hardware Test
+- ⌘V starts up in verbose mode
+- ⌘S starts in single user mode
+- ⌘R starts from a recovery partition
+- ⌥N starts from a NetBoot server using the default boot image
+- ⌥⌘PR resets PRAM and NVRAM
+- vHolding eject, F12, or a button on a pointing device ejects removable media (like optical disks)

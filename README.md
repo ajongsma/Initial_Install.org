@@ -36,9 +36,9 @@ When setting up a new Mac, you may want to set some sensible OS X defaults:
 
 ---
 
-Startup keys
+Other info:
 ===
-http://support.apple.com/kb/HT1533?viewlocale=en_US&locale=en_US
+Startup keys (http://support.apple.com/kb/HT1533?viewlocale=en_US&locale=en_US).
 
 On an Apple Wireless Keyboard you might have to wait until the startup chime before holding the keys:
 - Option shows alternative startup volumes

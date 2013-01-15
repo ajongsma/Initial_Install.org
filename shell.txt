@@ -1,0 +1,802 @@
+## http://lri.me/shell.txt
+
+#apache
+sudo apachectl start # start Apache and enable the launchd service
+sudo apachectl -t # configtest
+tail /var/log/apache2/error_log
+
+#APIs
+curl -s -G --data-urlencode q=example http://ajax.googleapis.com/ajax/services/search/web?v=1.0 | sed 's/","url".*//;s/.*unescapedUrl":"//'
+curl -s 'http://www.google.com/ig/calculator?hl=en&q=100%20usd%20to%20gbp' | iconv -f iso-8859-1 -t utf8
+curl http://api.wolframalpha.com/v2/query?input=3+ft+to+m&appid=WJ7EYW-PTXX8PJ5PR
+curl -s http://duckduckgo.com/?q=%5Cbang | sed -E "s/.*window\.location\.replace\('([^' ]+).*/\1/"
+
+#AppleScript
+for f in *.scpt; do osadecompile "$f" > "${f%scpt}applescript"; done
+for f in *.applescript; do osacompile -o "${f%applescript}scpt" "$f"; done
+open /System/Library/Frameworks/AppleScriptKit.framework/Versions/A/Resources/AppleScriptKit.sdef -a AppleScript\ Editor
+
+#archives
+tar -czf new.tar.gz * # create zip file
+tar -cf new.tar *
+COPYFILE_DISABLE=1 tar -cf archive.tar * # remove extended attributes and ACLs instead of creating ._ files
+tar --ignore='\.DS_Store' -czf archive.tar *
+tar -xf archive.tar.gz -C /tmp # extract file and change to /tmp for output
+wget -qO - http://lri.me/files/applescripts.tar.gz | tar -xz
+cd folder; zip archive.zip *
+unzip file.zip -d directory
+gzip test.txt
+gzip -d test.txt.gz # --decompress
+bzip2 test.txt
+bzip2 -d test.txt.bz2
+tar -cz * | openssl enc -aes-256-cbc -e > new.tar.gz.enc
+openssl enc -aes-256-cbc -in new.tar.gz.enc -d | tar -xz
+
+#aspell
+aspell check file.txt # open an interactive spell checker
+aspell list <<< the teh # teh
+echo $'personal_ws-1.1 en\nldgl' > d; aspell list --personal=./d <<< 'a ldgl dlng' # dlng
+
+#at
+sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.atrun.plist # enable at on OS X
+at now+5 <<< 'say test' # +5 and +5 seconds don't work
+at +2 hours <<< "terminal-notifier -message ''"
+echo say test > test.txt; at -f test.txt 23:59
+atq # at -l; list at queue
+atrm 14 # at -d 14
+
+#audio
+lame --preset help
+for p in insane extreme standard medium; do flac -cd test.flac | lame --preset $p - $p.mp3; done
+afconvert track.aif -o track.m4a -q 127 -b 160000 -f 'm4af' -d 'aac '
+flac --decode --stdout test.flac | lame --preset extreme --add-id3v2 --tt Title --ta Artist - test.mp3 # ffmpeg would preserve ID3 tags by default
+sox audio-file.wav -n spectrogram # save a spectrogram PNG
+sox input.aif -c 1 mono.aif
+soxi test.mp3 # sound exchange information
+say esrever -o test.aif; sox test.aif reversed.aif reverse
+mp3info -x -r a file.mp3
+sox 1.aif 2.aif combined.aif
+for n in E2 A2 D3 G3 B3 E4; do play -n synth 4 pluck $n repeat 2; done
+mid3v2 --artist Artist --song Title --album Album --track 1 # sudo pip install mutagen; id3tag and id3v2 don't support Unicode; id3tool doesn't support ID3v2
+mid3v2 --delete-all # delete ID3v1 and ID3v2 tags
+
+#awk
+awk 'BEGIN {FS="x"}{print $2}' <<< axb # b
+awk -F, '{print $1,$3}' <<< a,b,c # a c
+awk '!found[$0]++' <<< $'aa\nbb\naa' # remove duplicate lines
+{ rm t; awk '!found[$1]++' > t; } < t
+awk '/start/,/end/' # print lines between patterns
+awk 'length<71' # print lines that are 70 characters or shorter
+ls -l | awk '{k=0;for(i=0;i<=8;i++)k+=((substr($1,i+2,1)~/[rwx]/)*2^(8-i));if(k)printf("%0o\n",k)}' # show permissions in octal
+awk '/pattern/{print $2 " " $3}' # print the second and third columns of lines that contain a pattern
+awk '{printf "%09d%s\n",length($0),$0}' | sort | cut -c10- # sort lines by length
+awk 'BEGIN{srand();}{a[NR]=$0}END{for(i=1;i<=4;i++){x=int(rand()*NR);print a[x];}}' file.txt # print 4 random lines
+awk 'BEGIN{srand(); printf "%d\n",(1+rand()*9)}' # generate a random number between 1 and 10
+awk 'NR==2{print;exit}' # print the second line
+awk '{s+=$1} END {print s}' # sum the first column
+awk '!x[$1]++' <<< $'2\n1\n2' # uniq without sorting
+awk 'BEGIN{OFS=FS=","}{tmp=$2;$2=$3;$3=tmp;print}' <<< a,b,c # a,c,b
+
+#bash
+bash +B # emulate Bourne shell
+bash --norc -l # multi-character options have to be before single character options
+echo $BASH_VERSION # `bash -version` is the version of the first bash on PATH
+sh -c "shopt -uo posix; echo -E '\t'" # disable posix mode when invoked as sh
+sh -c "shopt -u xpg_echo; echo '\t'" # prevent echo from interpreting escape sequences when invoked as sh
+echo $- # startup options
+
+#bash 4
+declare -A arr; arr[aa] = bb # -A = associative array
+echo {1..9..2} # 1 3 5 7 9
+echo {001..4} # 001 002 003 004
+echo $0 # was $1, positional parameters start from 0
+a=xyz; echo ${a:1} # yz, was xyz
+a=xyz; echo ${a:0:-2} # xy, the last index can be negative
+shopt -s globstar; ls /usr/share/**/*.pdf
+read -N 5 var < file.txt # read first 5 characters
+echo -e '\u2630' # echo -e '\xe2\x98\xb0'
+arr=( a b ); echo ${arr[-1]} # b, array indexes can be negative
+mapfile arr < file.txt # arr=( $(cat file.txt) )
+|& # shorter version of 2>&1|
+
+#brew
+brew update && brew upgrade # update homebrew and formulas
+brew cleanup # remove older versions of formulas from the cellar
+brew doctor # check for potential sources of errors like unlinked formulas
+brew options $formula # flags for brew install
+brew search mp3
+brew --prefix # by default /usr/local
+brew link $formula # add symlinks from /usr/local/Cellar/ to /usr/local/bin/
+brew install coreutils; ls $(brew --prefix coreutils)/libexec/gnubin
+
+#curl
+curl -s # --silent
+curl --max-time 5
+curl -O # save to the current directory with the same name
+curl example.com -o ~/example.html
+curl -L example.com # --location, follow HTTP location headers or redirects
+curl -s -o /dev/null --head -w "%{url_effective}\n" -L example.com # write out URL after redirects
+curl --globoff 'http://example.com/[1080p].video'
+curl -i http://git.io -F url="$url" code="$abbreviation"
+curl -I # --head
+
+#diff
+diff -y 1.txt 2.txt # display first 61 characters in two columns
+
+#du
+sudo du -sh /.Spotlight-V100/ # specified folder, human-readable
+du -ch *.png # total size, human-readable
+cd /; sudo du -ch -d1 # -d1 = max depth 1
+du -k # 1024 bytes
+du -m # 1048576 bytes
+
+#encryption and decryption
+echo -n "foo" | openssl sha1 | xxd -p -r | base64 - # Base64-encoded SHA1 hash of foo
+
+#ffmpeg
+ffmpeg -i file.mkv # show information
+for f in *.flac; do ffmpeg -i "$f" -aq0 "${f%flac}mp3"; done # keeps ID3 tags, -aq0 corresponds to -V0 or --preset extreme in lame
+for f in *.m4a; do ffmpeg -i "$f" -aq2 "${f%m4a}mp3"; done # convert ALAC to V2 MP3, keeps ID3 tags
+ffmpeg -i input.aif -acodec libfaac output.m4a
+ffmpeg -ss 00:01:30 -t 0:0:20 -i input.mkv -vcodec copy -acodec copy output.mkv
+ffmpeg -i input.mp4 -vcodec copy -acodec copy output.mkv # ffmpeg -i input.mp4 output.mkv would re-encode the video
+ffmpeg -i input.mp4 -vcodec libx264 -crf 19 output.mp4 # 0 is the highest quality, 51 is the lowest
+ffmpeg -i input.mp4 -vcodec mpeg4 -qscale 3 output.mp4 # 1 is the highest quality, 13 is the lowest
+-y # overwrite output files without confirmation
+-an # no audio
+-c:v -c:a # -vcodec -acodec
+for f in *.mp3; do ffmpeg -i $f -map_metadata -1 -c:a copy -y $f; done; cat *.mp3 > combined.mp3
+ffmpeg -i input.mp3 -acodec copy output.mp3 # fix Xing headers of VBR files with incorrect length
+ffmpeg -i input.mkv -r 0.1 %06d.png # save an image every ten seconds (sometimes includes a few frames from the start)
+ffmpeg -i input.mkv -ss 0:4:0 -t 0:0:10 -r 4 %04d.png; convert -resize 40% -delay 4 *.png output.gif
+ffmpeg -i input.mkv -acodec copy sound.aac # extract audio without re-encoding, ffmpeg -i shows the formats of the audio streams
+ffmpeg -i file.mp3 -ar 22050 file.aif
+
+#files
+echo x > 1; ln 1 2; rm 1; cat 2 # x
+ls -t # sort by modification time
+ls -S # sort by size
+ls -r # reverse
+ls -1 # display output in a single column (default in scripts)
+ls -le # print an access control list
+ls | sort -n # sort numerically
+ls -A # list all entries except . and ..
+ls -i /bin/{ba,}sh # if files have the same inode number, they are hardlinked
+file --mime --brief test.png # text/plain; charset=utf-8
+file --mime-type --brief test.png # text/plain
+mkfile 10m 10mb.txt
+rm -f # don't ask for confirmation or show errors if files don't exist
+mkdir -p # create intermediate directories, don't shown an error if the directory exists
+sudo chown $USER file.txt # change owner from root to yourself
+sudo chown -R root:wheel folder
+cp -R a b # copy a
+cp -R a/ b # copy contents of a
+cp -a # archive; -pRP, preserve attributes, copy recursively but don't follow symbolic links
+cp -n # no overwrite
+umask 077 # might set default permissions to 644-077=600 for files and 755-077=700 for directories
+srm -s # --simple, overwrite blocks once with random data
+touch -m -t $(stat -f %SB -t %Y%m%d%H%M file.txt) file.txt # set modification time to creation time
+mktemp -t # use $TMPDIR instead of /tmp/
+mktemp -d # make a directory instead of a file
+stat -f %m /etc/ # format modification date
+stat -f %p /etc/ # file type and octal permissions
+find . -exec stat -f "%m %N" {} \; | sort -n | tail -n1 # modification date and name of the newest file
+sudo touch test # create a file owned by root
+f=test.txt; [[ ! -z "$(tail -c1 "$f")" ]] && echo "" >> "$f"; echo "aa" >> "$f"
+wc -w ~/Notes/*.txt | sort -rn
+strings -a /bin/ps # look for strings in all sections including the (__TEXT,__text) section
+md5 file.txt # calculate the MD5 checksum for a file
+cksum file.txt # checksum, size in bytes (octets), filename
+dd if=/dev/zero of=test bs=1000000 count=1 # create a 1 MB test file
+
+#grep
+-F # --fixed-strings; don't interpret the pattern as a regular expression
+-x # --line-regexp; like -F but matches only complete lines
+-r . # search recursively in all files under the current directory
+-m 1 # --max-count; print only the first match
+-l # print only the filenames of matching files
+-A 1 # --after-context; print a matching line and a line after it
+-C # -C 2 / --context 2 / -A2 -B2
+-C 0 # print all lines in matching files
+grep -l aaa * # list the names of files that contain aaa
+grep -v -e aa -e bb
+grep -xf 1.txt 2.txt # print lines in both files (O(n^2))
+grep -xvf 1.txt 2.txt # exact invert file, don't print lines in 1.txt
+grep --color something /usr/share/dict/words
+grep -Ev '^[[:blank:]]*#|^[[:blank:]]*$' /etc/apache2/httpd.conf
+grep . # don't match empty lines
+grep --color '|pat1|pat2' # print all lines but color matches
+grep -vf 1.txt 2.txt # remove lines in 1.txt
+grep aa */* -d skip # don't show "Is a directory" messages
+grep -Eo '^\w{3} [ \d]\d \d\d:\d\d:\d\d' /var/log/system.log
+
+#history
+sudo !! # run the last command as root
+!e # last command starting with e
+!^ # first argument
+!$ # last argument
+!:0 # zeroth argument
+!* # all arguments except the zeroth one
+cd !$:h # go to the directory of the last argument of the previous line
+^pat1^pat2 # run the previous command after replacing pat1 with pat2 once
+!!:gs/pat1/pat2 # run the previous command after substituting pat1 with pat2 globally
+HISTFILE= # don't save history from the current session; history -c would make $HISTFILE empty in Bash 3 but not Bash 4
+
+#ImageMagick
+-resize 50% # -filter Triangle, often needs additional sharpening
+-filter Lanczos2 -resize 50% # 2-lobed Lanczos, doesn't necessarily need sharpening
+for f in Bartlett Blackman Bohman Box Catrom Gaussian Hanning Hermite Lagrange Lanczos Lanczos2 Mitchell Parzen Point Robidoux Sinc Triangle Welsh; do convert -filter $f -resize 50% input.png $f.png; done
+-sharpen 0x0.4+0.8 # ignore pixels outside an automatic radius, radius (standard deviation or sigma) 0.4, 80%
+mogrify -filter lanczos2 -resize 65% ~/Desktop/*.png
+montage *.png -tile 1x -geometry +0+0 vertical-tile.png # -geometry +0+0 removes the default padding
+montage *.png -tile 3x3 -geometry 300x+0+0 screencaps.png
+for q in 100 95 89 60; do convert -format jpg -quality $q test.png $q.jpg; done # 100 might result in files about twice as big as 95, etc, but it depends on the size and complexity of the images
+for f in *.png; do convert -format jpg -quality 92 "$f" "${f%png}"jpg; done
+for f in *.png; do convert -format jpg -quality 92 -resize 'x500>' "$f" ~/Desktop/"${f%png}"jpg; done
+mogrify -format jpg -quality 92 -thumbnail 'x500>' -path /target/ *.png
+convert -delay 25 -loop 0 *.png new.gif # 25*0.01s, loop once
+identify image.png # show width and height and other information
+identify -format '%w %h %f' image.png # width height filename
+convert *.png images.pdf
+-monochrome
+-strip # remove color profiles, comments, and EXIF metadata
+-resize 300x200> # constrain proportions, only make images smaller
+-resize 300x200^ # constrain proportions, make images smaller or bigger so that they are at least 300x200
+-resize 300x200^ -extent 300x200 -gravity center # make images smaller or bigger and crop them so that they are exactly 300x200
+-background black -gravity center -extent 300x200 # make all images at least 300x200, add black background to the sides of smaller images
+-crop 50x0+0+0 -repage # remove 50 pixels from the left side, resize the image instead of drawing a background
+-crop 50x50+0+0 -gravity SouthEast -repage # remove 50 pixels from the right and bottom sides
+-crop +50+50 -crop -50-50 -repage # remove 50 pixels from all sides
+-crop +50+0 -crop -50+0 -repage # remove 50 pixels from the left and right sides
+-pointsize 20 -gravity south -annotate +0+15 'add text to bottom'
+convert -flatten transparent-bg.png white-bg.png
+for f in *.png; do convert "$f" -flatten -pointsize 20 -gravity south -annotate +0+25 "${f%.png}" "x$f"; done
+convert -size 100x100 gradient:yellow-blue \( gradient:black-lime -rotate -90 \) -compose CopyGreen -composite gradient_colormap.png
+convert -size 200x200 'xc:rgba(255,0,0,0.5)' square.png
+convert -background skyblue -border 10 -bordercolor skyblue -fill 'hsb(10%,50%,50%)' -font /Library/Fonts/Arial\ Narrow.ttf -pointsize 24 label:"some text" output.png 
+convert -size 500x500 tile:noise.png output.png
+convert *.png output.pdf
+
+#images
+for f in *.jpg; do jpegtran -rotate 90 "$f" > "$f.temp"; mv "$f.temp" "$f"; done # brew install libjpeg, rotate losslessly
+
+#launchd
+man launchctl.plist
+launchctl unload label.plist && launchctl load label.plist # apply changes to a plist
+launchctl start label # run a program manually
+launchctl export # list environment variables
+cat /var/db/launchd.db/com.apple.launchd.peruser.*/overrides.plist
+sudo cat /private/var/db/launchd.db/com.apple.launchd/overrides.plist
+launchctl getenv PATH # /usr/bin:/bin:/usr/sbin:/sbin
+
+#logs
+tail -n 40 /var/log/system.log
+tail -f /var/log/system.log # keep watching for new lines
+logger message # add a message to system.log
+logger -s # also print to stderr
+
+#man
+man manpages
+man hier # an overview of the UNIX filesystem hierarchy
+man ascii # octal, hexadecimal, and decimal ASCII tables
+whatis crontab; man 5 crontab
+man grep | less -p ^EXAMP # --pattern
+man re_format # POSIX 1003.2 regular expressions
+sudo /usr/libexec/makewhatis # update the whatis files used by whatis and apropos
+
+#network
+whois g.co
+netstat -rn | grep default # router's IP address
+dig +short txt autism.wp.dg.cx # DNS query for a Wikipedia TXT record
+curl ifconfig.me # public IP
+networksetup -setwebproxy "Wi-Fi" proxy.company.com 80 On authusername authpassword
+sudo ipfw pipe 1 config bw 15KByte/s; sudo ipfw add 1 pipe 1 src-port 80; sleep 60; sudo ipfw delete 1
+lsof -i # list open Internet and x.25 (HP-UX) network files
+
+#numeric
+let x=0xFF; echo $x # 255
+bc <<< 'ibase=16;FF' # 255
+bc <<< 'obase=16;255' # FF
+bc <<< 'obase=16;ibase=8;377' # FF
+[[ 0088 < 0122 ]]; echo $? # -lt would interpret 0088 as an octal number
+bc <<< 'scale=1;5.1/2' # 2.5
+bc -l <<< '(1+sqrt(5))/2' # --mathlib
+seq -w -s ' ' 9 2 13 # 09 11 13
+seq -s ' ' -f %03g 9 10 # 009 010
+seq -s '.aif ' -t '\b' 1 2 # 1.aif 2.aif
+
+#options and commands missing on OS X
+sort -R # randomize lines
+sort -h # sort human-readable file sizes like 100M and 2G
+find -printf
+find -regex
+date +%N # nanoseconds
+ls --color-auto # use ls -G or export CLICOLOR=1
+ls --ignore
+readlink -f # print absolute paths
+shuf # randomize lines or select random lines
+uniq -w n # uniq by the first n characters
+sed -i # only sed -i '' works
+find -name # only find . -name works
+
+#options and commands missing on other platforms 
+tail -r # print in reverse order
+printf %q # backslash-escape !"$&'()*,;<>?[\]^`{|}
+jot
+
+#OS X
+screencapture -coCT 5 # copy, no shadows, include cursor, timer 5 seconds
+screencapture -i ~/Desktop/`date '+%y%m%d%H%M%S'`.png
+security dump-keychain -d ~/Library/Keychains/login.keychain
+security find-internet-password -s accounts.google.com
+security lock-keychain # lock the login keychain
+security set-keychain-settings -lut 1800 # set lock up time to 30 minutes
+sudo pmset schedule shutdown "22/04/2012 10:00:00"
+sudo pmset repeat wake "$hour:$min:00"
+sudo pmset repeat cancel
+pmset -g # get all settings
+pmset -g sched # get scheduled events
+pmset -g | sed -n 's/ displaysleep  *//p'
+pmset -g log # show a log of power assertions and events
+pmset -g batt # show battery capacity and remaining time
+pmset sleepnow
+sudo opensnoop -f test.txt # processes that use a file
+sudo opensnoop -n process # files used by a process
+sudo opensnoop -n cfprefsd # see what property lists are changed
+sudo execsnoop -v # print details about new processes, -v includes start times
+xattr -l file.txt # list
+xattr -d com.apple.FinderInfo file.txt # delete
+xattr -dr com.apple.quarantine ~/Downloads/ # delete recursively
+xattr -c file.txt # clear all extended attributes; -d can't be used alone
+xattr -p com.apple.metadata:kMDItemFinderComment test.txt | xxd -r -p | plutil -
+ls -l@ * # show the names of extended attributes
+cp -X # remove exteneded attributes
+cat file/..namedfork/rsrc # print resource fork (which is actually an extended attribute)
+find . -type f -exec test -s {}/..namedfork/rsrc \; -print # find files with resource forks
+convert xml1 -o - - | ruby -e 'require "cgi"; puts CGI.unescapeHTML(STDIN.read.scan(/<string>(.*)<\/string>/m)[0][0])'
+diskutil list
+diskutil eject "Western Digital" # unmount all volumes and eject a drive
+diskutil mountDisk "Western Digital" # mount all volumes on a drive (or all volumes on the same drive as the specified volume)
+diskutil unmountDisk "Western Digital" # unmount all volumes on a drive
+diskutil info disk0 | grep SMART
+open http://example.com/page/{1..10}
+open . # open the current directory in Finder
+open file.txt -e # open in TextEdit
+open -Fa Preview # open fresh or without restoring windows
+open -gj # open on the background and hidden (-j is only shown in the help message)
+defaults write -g NSUserKeyEquivalents -dict-add Minimize '\0' "Minimize All" '\0'
+defaults domains # list all domains and bundle identifiers
+defaults domains | sed $'s/, /\\\n/g' | grep com.apple
+defaults delete com.apple.dock persistent-apps
+defaults find nsquitalw
+sudo languagesetup # change the login window language
+sudo installer -pkg /Volumes/someapp/someapp.mpkg -target /
+pkgutil --expand test.pkg . # copy contents to .
+sudo atsutil databases -remove; atsutil server -shutdown # remove fontd databases and cache files
+/System/Library/CoreServices/Menu\ Extras/user.menu/Contents/Resources/CGSession -suspend # log out to fast user switching screen
+chflags nohidden ~/Library
+chflags hidden ~/Music/iTunes/
+chflags nouchg $file # no unchangable, remove Finder lock
+sudo chflags -h nohidden /etc # chflags follows symlinks without -h
+SetFile -a V $file # attribute invisible, GetFileInfo -a V
+SetFile -d "$(date -r $(($(stat -f %B -t %s "$f") + 1234567)) '+%m/%d/%Y %H:%M:%S')" "$f" # shift creation date
+SetFile -a E $file # hide extension
+SetFile -d "$(GetFileInfo -m test.txt)" test.txt # set modification date to creation date
+sudo rm -rf /Volumes/SomeVolume/{.Spotlight-V100,.TemporaryItems,.Trashes,.fseventsd}
+/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport
+export COMMAND_LINE_INSTALL=1; sudo softwareupdate -i -a
+sudo softwareupdate -d -a # download all updates without installing them
+dot_clean /Volumes/test # recursively remove ._ (AppleDouble) files after saving the information in them in extended attributes
+echo "# aa" | markdown | textutil -stdin -stdout -format html -convert rtf | pbcopy
+pbpaste | wc -l
+codesign -vv $app # --verify --verbose
+sudo codesign -fs - /Applications/App.app # --force --sign, replace an invalid code signature with an empty signature
+codesign -dvvv --entitlements - /Applications/iTunes.app # --display, increase verbosity
+/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -domain local -domain system -domain user # rebuild the Launch Services database; -kill -seed doesn't access as many files
+/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -dump | grep $'\tuti:' | awk '{print $2}' # list UTIs
+yes | hdiutil attach OmniGrafflePro-5.3.3.dmg > /dev/null # bypass a licence agreement
+mdfind -name $(osascript -e 'id of app "TextEdit"').plist -onlyin ~/Library
+strings /Applications/iTunes.app/Contents/MacOS/iTunes | grep -E '^[^_-][a-zA-Z0-9_.-]{10,80}$' | sort | uniq | pbcopy
+strings /System/Library/Frameworks/*.framework/Versions/*/* 2> /dev/null | grep -E '^[^_-][a-zA-Z0-9_.-]{10,80}$' | grep -iE '(en|dis)abl' | sort | uniq | pbcopy
+/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I # show information like the Wi-Fi channel
+kextstat | grep -v com.apple
+f=~/.logouthook; sudo defaults write com.apple.loginwindow LogoutHook $f; echo $'#!/bin/sh\n\nsay $RANDOM' > $f; chmod 744 $f
+defaults read /Library/Preferences/com.apple.windowserver | grep Width
+system_profiler SPDisplaysDataType | awk '/Resolution/{print $2,$4}' # width and height of displays
+/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend # lock screen
+sudo /System/Library/CoreServices/Setup\ Assistant.app/Contents/MacOS/Setup\ Assistant # run Setup Assistant again
+/System/Library/CoreServices/pbs -dump_pboard
+ioreg -w0 -l # don't wrap lines
+sudo /Developer/Library/uninstall-devtools
+systemsetup -printCommands
+xar -xf SafariExtension.safariextz
+VERSIONER_PERL_PREFER_32_BIT=1 perl -MMac::InternetConfig -le 'print +(GetICHelper "http")[1]' # default browser
+open dict://word
+sudo shutdown -h 23:30 # halt at 11:30pm
+sudo shutdown -r now # restart
+system_profiler | awk '/Hardware UUID: /{print $3}' # ioreg -rd1 -c IOPlatformExpertDevice | grep UUID
+x=~/Library/Caches/com.apple.Safari/Webpage\ Previews; rm -r "$x"; touch "$x"
+killall -kill # send SIGKILL (-9) instead of SIGTERM (-15)
+sw_vers # print OS X version and build identifier
+diskutil mount "Recovery HD" && hdiutil mount /Volumes/Recovery\ HD/com.apple.recovery.boot/BaseSystem.dmg
+dscl . -change /Users/$USER UserShell /usr/local/bin/bash # change the login shell, can also be done with chsh or in System Preferences
+dscl -read /Users/$USER # print Directory Services data
+touch $'a\nb'; mdfind $'kMDItemFSName=="*\n*"'
+sqlite3 ~/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV* 'select LSQuarantineDataURLString from LSQuarantineEvent' | grep -v ^data | grep -v ^$ # a history of URLs downloaded from browsers and other applications
+brew install imagesnap; while :; do; imagesnap ~/Desktop/webcam-`date '+%y%m%d%H%M%S'`.png > /dev/null 2>&1; sleep 1; done
+du -ms /private/var/folders/*/*/*/*/ | gg-rn
+for f in *.icns; do sips -s format png "$f" -o "${f%icns}png"; done
+sips -Z 500 input -o output.png # the default filter is something like Gaussian which makes images very blurry; use ImageMagick instead
+ioreg -l | awk '/AvgTimeToEmpty/ {print $NF}' # estimated minutes before the battery is empty
+ioreg -wO -l | awk '/(Max|Current)Capacity/{print $NF}'
+sudo /System/Library/CoreServices/Finder.app/Contents/MacOS/Finder
+qlmanage -p # preview
+qlmanage -r # reset cache
+qlmanage -t # thumbnail
+qlmanage -m plugins # list Quick Look plugins
+sudo nvram boot-args=iog=0x0 # disable an internal display when an external display is connected
+nvram -p # print nvram variables
+caffeinate -d -t 3600 # prevent display sleep for the next hour
+caffeinate # caffeinate -i; prevent idle sleep
+caffeinate open -Wa uTorrent & # prevent idle sleep until an application is closed
+pgrep -x TextEdit && caffeinate -t 60
+pgrep -x Transmission || open -jga Transmission
+echo $TMPDIR # user-specific temporary directory in /var/folders/
+man pbs # pbs no longer manages the pasteboard but just services
+ls -t /var/db/receipts/
+lsbom /var/db/receipts/com.apple.pkg.MediaFiles.bom # list files installed by an installer
+cat /Library/Receipts/InstallHistory.plist # list of installed packages
+MANPAGER='col -bx' man man | open -f -a TextEdit
+sudo touch /var/db/.AccessibilityAPIEnabled # enable access for assistive devices
+defaults write com.apple.LaunchServices LSHandlers -array-add '{LSHandlerContentType=com.netscape.javascript-source;LSHandlerRoleAll=com.panic.Coda;}'
+LC_CTYPE=UTF-8 pbcopy # pbcopy and pbpaste don't support Unicode in some environments; you can also set LC_ALL to en_US.UTF-8 or __CF_USER_TEXT_ENCODING to $UID:0x8000100:0x8000100
+find ~/Library/Containers/com.apple.Notes -type f
+sudo fs_usage -w > ~/Desktop/fs_usage.txt # force wide display
+sudo fs_usage -w | grep -v 0.000 # show only operations that take a microsecond or more
+otool -L /Applications/iTunes.app/Contents/MacOS/iTunes # show shared libraries used by an object file
+networksetup -listallnetworkservices
+sudo ifconfig $(networksetup -listallhardwareports | grep -E '(Wi-Fi|AirPort)' -A 1 | grep -o en.) down # turn off Wi-Fi
+for f in *.rb; do mate "$f"; done # open files in separate windows
+strings /System/Library/CoreServices/backupd.bundle/Contents/Resources/backupd-helper | grep ^-
+jot -r 2 1 6 # print two random numbers between 1 and 6
+f=/Library/Preferences/com.apple.windowserver.plist; sudo defaults write $f DisplayResolutionEnabled -bool true; sudo defaults delete $f DisplayResolutionDisabled # show HiDPI modes in the display preferences after logging out and back in
+sudo find /private/var/folders/ -name com.apple.dock.iconcache
+sudo spctl --master-disable # disable Gatekeeper (spctl --status also changes to disabled when Gatekeeper is disabled from System Preferences)
+mate -r # include files in the open recent menu
+mate -W # wait until files are closed
+open $(mdls -name kMDItemWhereFroms ~/Desktop/*.download | grep -o 'http[^"]*')
+defaults read /Library/Preferences/SystemConfiguration/com.apple.airport.preferences.plist RememberedNetworks | sed -En 's/^ +"(SSID_STR|_timeStamp)" = "(.+)";/\2/p'
+sudo scutil <<< 'add State:/Network/Interface/en0/RefreshConfiguration temporary' # renew DHCP lease
+
+#pandoc
+man pandoc_markdown
+pandoc -f html -t markdown --atx-headers http://lri.me/keybindings.html
+pbpaste | pandoc # Markdown to HTML
+pandoc --preserve-tabs test.md -o test.html
+pandoc -f markdown -t docx http://daringfireball.net/projects/markdown/index.text -o ~/Desktop/test.docx
+
+#parameter expansion
+s=1x2x3; echo ${s#*x} ${s##*x} ${s%x*} ${s%%x*} # 2x3 3 1x2 1
+s=1x2x3; echo ${s/x/y} ${s//x/y} ${#s} # 1y2x3 1y2y3 5
+x=xyz echo ${x#?} # yz
+
+#perl
+perl -MURI::Escape -ne 'print uri_escape($_)' # URL encode
+perl -pe 's/([^A-Za-z0-9])/sprintf("%%%02X", ord($1))/seg' # URL encode
+perl -MHTML::Entities -pe 'decode_entities($_)' # decode HTML entities
+perl -pi -e 's/search/replace/g' *.txt
+perl -ne 'print if (rand() < .05)' input.txt # print about 5% of lines
+
+#processes
+ps -ax # include processes from all users (or root) and processes that don't have a controlling terminal
+ps -axco comm # print list of command names
+ps u # show usernames and other additional columns
+ps up1 # show information for pid 1
+ps -axco %cpu,command # output cpu use and command names
+ps -axco etime,command # elapsed running time
+ps -ef # show parent PIDs
+pgrep -x cron # print the pids of processes that match cron exactly
+lsof -c bash # list files opened by commands that start with bash
+lsof -p $$ # list files opened by the current process
+sudo dtrace -n 'proc:::signal-send /pid/ { printf("%s -%d %d",execname,args[2],args[1]->pr_pid); }' # show signals set to processes
+top & pid=$!; echo $pid
+ps eco ppid -p $(pgrep -x cron) # id of the parent process
+top -o time # sort processes by CPU time
+top -l1 -n0 # one sample, 0 processes (show only the information at the top)
+ps eaxo %cpu | awk '{s+=$1}END{print s}' # total CPU use
+
+#property lists
+plutil -convert xml1 -o - # output to stdin
+pl -input xml.plist -output oldstyle.plist # plutil can only convert old-style to XML
+plutil test.plist # -lint
+plutil -convert xml1 /System/Library/Frameworks/AppKit.framework/Resources/StandardKeyBinding.dict -o /dev/stdout | pl
+
+#random
+echo $(($RANDOM%8+1)) # random number between 1 and 8
+openssl rand -hex 2 # generate a random [0-9a-f]{4} string
+openssl rand -base64 2 # generate a random [A-Za-z0-9+=]{4} string
+LC_ALL=C tr -dc 0-9a-zA-Z < /dev/random | head -c20
+dd if=/dev/urandom count=4 2>/dev/null | openssl dgst -sha1
+hexdump -e '1/4 "%u\n"' -n2 /dev/urandom # take 1 4-byte element, format it as an unsigned integer, read 8 bytes from urandom
+
+#readline
+bind -p # list function names and bindings
+bind -V # list variables
+bind 'set completion-ignore-case on' # ignore case for tab completion
+bind '" ": magic-space' # make space expand designators like !!
+bind '"\e,": "!!\e^"' # make M., insert the last line in emacs mode
+
+#redirection
+<<< # echo |
+< # cat |
+&> /dev/null # 2>&1 /dev/null
+{ head -n1 1.txt; tail -n1 2.txt; } > 3.txt # the second semicolon is required
+cmd1 | cmd2 | cmd3; echo ${PIPESTATUS[@]}
+2>> # append stderr
+cmd > >(outcmd) 2> >(errcmd)
+command 3>&1 1>&2 2>&3 # swap STDERR and STDOUT
+
+#renaming files
+i=1; for f in *; do mv "$f" $((i++)).mp3; done
+i=1; for f in *; do mv "$f" $(printf %04d $((i++)).${f##*.};; done
+IFS=$'\n'; i=1; for f in $(ls -rt); do mv "$f" "$((i++)) $f"; done
+for f in prefix\ *.jpg; do f2=${f%.jpg}; mv "$f" prefix_$(printf %02d ${f2#* }).jpg; done
+
+#rsync
+rsync --archive --delete --exclude=.DS_Store ~/Sites/site/ user@host.com:public_html
+rsync --bwlimit 1024 # limit bandwidth to 1 KiB/s
+rsync -a # -rlptgoD; --recursive --links --perms  --times --group --owner --devices --specials
+
+#Ruby
+sudo gem update --system # update rubygems and all gems
+gem list --local # installed gems
+gem # show a help message (gem doesn't have a man page)
+ruby -i.bak -pe '$_.gsub!("a", "b")' test.txt # -p reads and prints each line ($_) of the input
+ruby -i -nKUe 'BEGIN{$\="\n"}; print $_.chomp' file.txt # CRLF to LF
+ruby -e 'puts STDIN.readlines.uniq' <<< $'b\na\nb' # uniq without sorting
+ruby -ne 'puts "prefix #{$_}"' <<< $'1\n2'
+ruby -rdigest -ne 'BEGIN{$d=Digest::MD5.new}; $d << $_; END{puts $d.hexdigest}'
+ruby -KUe '"sometext".chars{|c|puts c.unpack("U*")[0].to_s(16)}'
+ruby -e 'print STDIN.read.gsub(/([^\w])/) { "%" + $1.unpack("H2" * $1.size)[0].upcase }' # hex codepoints of characters
+
+#scripts
+echo 1>&2 "usage: $0 [FILE ...]"; exit 1
+dirname "$0" # the directory of a script
+
+#searching
+find . -maxdepth 2 -name "*.md" -print0 | xargs -0 wc -l
+find ~/Music -name '*.m3u' -o -name '*.pls' -delete
+find . \( -name "*.txt" -o -name "*.text" \) -print0 | xargs -0 du -s
+find ~/Library/Fonts \( -name fonts.dir -o -name encodings.dir -o -name fonts.list -o -name fonts.scale \) -delete
+find ~ -size +50M
+find . -mtime +366 # 366 or more days ago
+find . -mtime -7 # last week
+find . -type d -empty -delete
+find some\ folder -exec touch '{}' \;
+find -L ~ -type l -l # find broken symlinks
+find "$PWD" -type f -exec stat -f $'%m\t%N' '{}' \; | sort -rn | cut -f2- sort by modification date
+find . -name '*.mobi' -exec mv '{}' ~/Desktop/ \;
+sudo find / -type f -size +100M -print0 | xargs -0 du | sort # find large files
+find . -name '*.png' -print0 | xargs -0 du -ch | tail -n1
+locate -i # case insensitive
+find -execdir
+
+#sed
+sed 's/\&/\&amp;/g;s/</\&lt;/g;s/>/\&gt;/g'
+sed -i '' 's/search/replace/g' # modify files in place without creating backup files
+sed 3q # quit after printing the third line
+sed -n 1,3p # no printing by default, print lines 1 to 3 (reads whole file)
+sed -n '3{p;q;}' # 3p reads the whole file
+sed 1d # delete the first line
+sed 1,4d # delete first four lines
+sed '$d' # delete the last line
+sed 4d # delete line 4
+sed '1!G;h;$!d' # reverse lines
+sed -En 's/^prefix (.*)/\1/p' # print the rest of lines that start with prefix
+sed -En 's/.*href="([^"]+\.jpg)".*/\1/p'
+sed '/^$/d' delete empty lines
+sed '/^[[:space:]]*$/d'
+sed $'/111/a\\\n222\\\n' <<< $'111\n333'
+sed -n '/w+/,/x/p' <<< $'v\nww\nx\ny\n' # print lines between pattern addresses
+sed 's/[^[:print:]]//g'
+
+#shell
+cd - # change to the previous working directory
+cd # cd ~
+cd -P /etc; pwd # /private/etc
+cp filename{,.bak}
+pushd . # dirs prints the stack, popd returns the previous directory
+read day month year <<< $(date +'%d %m %y')
+shopt -s extglob; ls !(index).html # all html files except index.html
+help test
+(cd /tmp && ls) # cd without changing the directory in the current shell
+touch ~/.hushlogin # don't show a last login message
+mv */* . && rm -r */
+shopt -s variable # set
+shopt -u variable # unset
+shopt -p variable # print
+shopt -p # print all variables
+(shopt -s dotglob; echo ~/*) # echo ~/* ~/.*
+locale -a # list all locale names for LC_ALL, like C, POSIX, and en_US.UTF-8
+which -a ruby # show all versions
+whereis ruby
+set # print variables and functions
+env # print environment variables
+export # -p; print a list of all exported variables and functions
+printf '\e[8;50;100t' # resize a window to 100x50 characters
+printf '\e[3;0;0t' # move a window to the top left corner
+printf '\e[0;32m%s\e[0m\n' green
+type echo # see if echo is a builtin
+a=12x4; echo ${a: -2} # ${a:-2} would set a to 2 if it was unset or null
+$(< file) # faster than $(cat file)
+export PS1="\W/ " # basename of the working directory
+open ftp://ftp.cwru.edu/pub/bash/
+sudo -s # shell, log in to an interactive root shell
+su root # open a root shell without logging in on the root account if the root account is enabled
+getconf ARG_MAX # maximum number of bytes for arguments; sysctl kern.argmax
+hash wget &> /dev/null && echo wget exists
+ruby -e 'puts Time.now.to_f' && login -fp $USER ruby -e 'puts Time.now.to_f'
+fg # restore a process (like less) backgrounded with control-z
+read -r firstline < file
+tput sgr0 # reset colors
+x=axb; IFS=x; set -- $x; echo $1 # a a
+x=axb; IFS=x read v1 v2 <<< "$x"; echo $v1 # a
+printf '%b\n' 'a\ta' # echo -e
+printf %s 'a\ta' # echo -En
+cat -v # show escape sequences of pressed keys
+set -- 1 2; echo $@ # 1 2
+history | awk '{a[$2]++}END{for(i in a){print a[i] " " i}}' | sort -rn | head # most used commands
+for f in {30..37}; do for b in {40..47}; do printf "\e[%dm\e[%dm%d on %d\e[0m" $b $f $f $b; done; echo; done # ANSI color chart
+a=(aa bb); echo ${a[@]}; for ((i=0; i<${#a[*]}; i++)); do echo "${a[$i]}"; done
+read -n 1 -p "Continue (y/n)? " answer; echo # read one character
+complete -p # print the names of enabled completion functions
+declare -f function # show the source of a function
+for i in {1..5}; do echo $i; done; for ((i=1; i<6; i++)); do echo $i; done
+x=abA; y=${x//[^a|A]}; echo ${#y}; grep -o '[a|A]' <<< "$x" | wc -l
+echo 127.0.0.1 twitter.com | sudo tee -a /etc/hosts
+sudo bash -c 'echo 127.0.0.1 twitter.com >> /etc/hosts'
+shopt -s nullglob # normally echo *.jpg prints *.jpg as text if it doesn't match any files
+shopt -s nullglob; glob='*.jpg'; [[ -z $(printf %s $glob) ]] && exit
+i=1000; for n in {1..100}; do touch $((i++)); done; echo *
+x=3; for i in {1..$x}; do echo $i; done # doesn't work, use seq
+
+#Spotlight
+mdfind '"exact phrase"'
+mdfind kMDItemFSName==*.scpt
+mdfind kMDItemFSInvisible==1
+mdfind kMDItemContentType==com.apple.application-bundle -onlyin /usr/local
+mdfind 'kMDItemTextContent=="*expose*"cd' # ignore case and diacritics
+mdfind 'kMDItemFSLabel>0' # items with color labels
+mdfind 'kMDItemFSContentChangeDate==$time.this_week(-1)'
+mdfind 'kMDItemFSSize>=5000&&kMDItemFSSize<=5005'
+mdfind 'kMDItemFSContentChangeDate>=$time.iso(2012-04-13T13:44Z)'
+mdfind 'kMDItemFSCreationDate>=$time.now(-3600)'
+mdfind 'kMDItemKind==*movie&&kMDItemPixelHeight>=720'
+mdfind -0 -onlyin ~/Music 'kMDItemFSName==*.mp3&&kMDItemAudioBitRate<=192000' | xargs -0 mdls -name kMDItemAlbum | sort | uniq
+mdls -name kMDItemContentTypeTree test.txt # UTI and parent UTIs
+sudo mdutil -E / # erase and rebuild the Spotlight index
+mdfind -name Thumbs.db -0 | xargs -0 rm
+mdfind -name xcode -0 | xargs -0 du -sm | sort -rn
+sudo mdfind com_apple_backup_excludeItem==com.apple.backupd
+
+#ssh
+cat ~/.ssh/id_rsa.pub | ssh user@host "mkdir -p ~/.ssh/; cat >> ~/.ssh/authorized_keys; chmod 700 ~/.ssh/; chmod 600 ~/.ssh/authorized_keys"
+ssh-keygen; brew install ssh-copy-id; ssh-copy-id user@host
+
+#system
+last reboot # list dates of last reboots
+cat /usr/sbin/periodic
+yes > /dev/null & # max out a CPU
+
+#text
+tr [:upper:] [:lower:] <<< A
+tr -s ' ' # collapse (squeeze) spaces
+tr a-zA-Z n-za-mN-ZA-M # rot13
+tail +3 # don't print the first two lines
+tail +0 # cat
+shuf -n 2 /usr/share/dict/words | tr '\n' ' ' # brew install coreutils and gshuf on OS X
+column -t /etc/passwd # format delimited text as a monospace table
+diff -urp $originaldirectory $modifieddirectory
+diff <(sort file1) <(sort file2)
+sort -f # fold (ignore case)
+sort -r # reverse
+sort -n # numeric
+sort -u # uniq
+sort -t$'\t' -k5 # sort tsv by fifth column
+sort -t ':' -k 3n /etc/passwd
+sort -k2 -sr | uniq -f1 # uniq by second column
+uniq -u # print only unique lines
+uniq -d # print only duplicate lines
+uniq -c | sort -rn # print counts before lines
+uniq -i # ignore case
+uniq -f2 # ignore first two fields
+comm -3 <(sort file1) <(sort file2) | sed $'s/^\t//g' # symmetric difference
+comm -23 <(sort file1) <(sort file2) # relative complement
+echo $'a\nb' | comm -23 <(sort) <(sort <<< $'c\nb') # a
+join <(sort -u file1) <(sort -u file2) # intersection
+comm -12 <(sort file1) <(sort file2) # intersection
+paste col*.txt # create a tsv file
+paste <(cut -d $'\t' -f1-3 tsv.txt) <(cat col4.txt) <(cut -d $'\t' -f5- tsv.txt)
+paste tsv.txt <(pbpaste)
+paste -s -d '\t\n' # replace every other linefeed with a tab
+echo $'1\n2\n3' | paste -d '\0' -s - # remove linefeeds (\0 is empty string)
+diff -q <(sort -u file1) <(sort -u file2); echo $? # set equality
+wc -l < file # don't display filenames
+cut -d $'\t' -f2 test.tsv
+cut -d ' ' -f2- <<< "1 2  3" # 2  3
+cut -s # suppress lines with no delimiter characters
+iconv -f iso-8859-1 -t utf-8 input.txt > output.txt
+iconv -f utf-16le -t utf-8
+echo $'b\na\nb' | sort | uniq -c | sed 's/^ *//g' | sort -rn # sort by count
+echo -n $'1\n2\r3\r\n4' | ruby -e 'print STDIN.read.gsub(/\r\n?/,"\n")'
+fold -w 72 -s input.txt # -s wraps lines only after spaces
+fmt -1 # print each word on a separate line
+fmt -w 999999 # remove line breaks from hard-wrapped text
+fmt -d '' <<< $'Do not.\nDouble-space.'
+xxd -g 1 <<< aa # hexdump, use groups of 1 byte
+printf %s foo | hexdump -ve '8/1 "%05X "' # hexadecimal code points of characters
+printf %s 'a\0a' | xargs -n1 -0 echo
+look prefi # list words from /usr/share/dict that start with prefi
+
+#time
+man strftime
+date +%V # week number
+date '+%-d. %-m.' # day of month and numeric month without leading zeros
+date -r 0x50697c0e # print a hexadecimal time stamp as a human-readable date
+ruby -e 'puts Time.now.to_f' # microseconds
+TZ=EST date +%z # UTC offset of Eastern Standard Time
+date +%FT%T%z # ISO 8601, +%Y-%m-%dT%H:%M:%S%z
+TZ=UTC date +%FT%TZ # ISO 8601 as UTC
+date -jf "%T %z" "08:11:02 +0000" +'%T %z' # convert a date to the current time zone
+TZ=EST date -jf %H%z 23+0100 +%I%p # 05PM
+touch -t $(date -r $(($(stat -f %m -t %s "$f") + 1234567)) +%Y%m%d%H%M%S) "$f" # shift modification date
+time cat # control-c shows elapsed time
+leave +1 # set an alarm in one minute
+leave 1930 # set an alarm at 7:30 PM
+
+#Time Machine
+tmutil startbackup --block && diskutil eject Time\ Machine
+sudo tmutil disablelocal # disable /Volumes/MobileBackups/
+open "$(tmutil machinedirectory)/Latest/*/Users/$USER/"
+sudo /System/Library/Extensions/TMSafetyNet.kext/Helpers/bypass rm -rf /Volumes/Time\ Machine/Backups.backupdb/Mac/2012-09-13-191910/folder
+sudo tmutil delete /Volumes/Time\ Machine/Backups.backupdb/MacBook\ Air/2012-09-13-191910 # tmutil listbackups
+
+#utilities
+webkit2png -C -s 1 -W 1000 -H 1000 --clipwidth 1000 --clipheight 1000 http://t.co
+echo "<style>em {padding:5px}</style><em>Test</em>" > test.html; webkit2png test.html --clipwidth=55 --clipheight=35 --scale 1 -C
+brew install htmlcompressor yuicompressor; cp /usr/local/Cellar/yuicompressor/*/libexec/yuicompressor-*.jar /usr/local/Cellar/htmlcompressor/*/libexec/; htmlcompressor --compress-css test.html -o test.html
+tidy -xml -i -m file.xml # -indent, -modify (in place)
+python -mjson.tool <<< '{"aa":"bb","cc":"dd"}' # reformat JSON
+sudo gem install json; prettify_json.rb <<< '{"aa":"bb","cc":"dd"}'
+brew install htmlcompressor; htmlcompressor --compress-css test.html -o test.html # minify HTML
+echo '<b><i>a</i></b>' | php -r 'echo strip_tags(file_get_contents("/dev/stdin"), "<i>");' # <i>a</i>
+exiv2 -k -F rename *.jpg # use the date and time of photos as new names for them
+brew install xpdf; pdftotext file.pdf
+sudo gem install terminal-notifier; terminal-notifier -title title -message message
+sudo gem install wkpdf; wkpdf --source http://www.apple.com --output apple.pdf
+brew install smartmontools; smartctl -a disk0
+brew install xpdf; pdftotext test.pdf
+sudo gem install bcat; bcat <<< '<b>b</b>' # cat to browser
+dialog=$(CocoaDialog standard-inputbox --title title --text text --float); [[ ${dialog:0:1} == 2 ]] && exit; answer=${dialog:2}
+youtube-dl https://www.youtube.com/watch?v=$id
+
+#web
+echo "<img src=\"data:image/png;base64,$(openssl base64 -in "image.png" | tr -d '\n')\">"
+cd ~/Pictures; git clone git://github.com/subtlepatterns/SubtlePatterns; cd SubtlePatterns; for f in *.png; do echo "<div style=\"background:url($f); display: inline-block; width: 20em; height: 10em; text-shadow: 0 0 0.2em white\">${f%.*}</div>"; done > index.html
+
+#wget
+wget -m http://example.com # --mirror; --recursive --timestamping --level inf --no-remove-listing
+-nd # --no-directories; download all files to the current directory
+wget -nd -r -l 3 -A jpg,jpeg,png,gif http://t.co # --no-directories --recursive --level --accept
+wget --random-wait -r -p -e robots=off -U mozilla http://www.example.com
+--limit-rate 20k
+wget -Q 5m # --quota; stop downloading after 5 MB; there's no option like curl's --max-filesize
+-H # --span-hosts; links to different domains aren't followed by default
+wget -r -l 2 -p # -p (--page-requisites) makes -l 2 include resources like images on linked pages
+-np # --no-parent, don't follow links to parent directories
+-w5 # wait 5 seconds between retrievals
+--random-wait # wait between 0.5 and 1.5 times -w seconds
+-N # --timestamping; don't redownload files that haven't been modified
+-t1 # try downloading only once (the default is 20)
+-i urls.txt
+wget -r -l1 -H -t1 -nd -N -A mp3 -e robots=off -i mp3blogs.txt

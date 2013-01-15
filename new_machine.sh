@@ -83,16 +83,18 @@ require 'gcc'
 mkdir ~/Github
 cd ~/Github/
 git clone https://github.com/ajongsma/Initial_Install.git
-cd Initial_Install
-
-# Install iTerm2
-./install_iTerm2
+cd Initial_Install/
 
 ## reload settings for changes to be taken into account
 #source ~/.bashrc
 
+# Install iTerm2
+cd ~/src/
+./install_iTerm2
+
 # Install a broomed version of Ruby enviroment
 # https://github.com/sstephenson/rbenv
+cd ~/Github/Initial_Install/
 ./install_rbenv
 
 if [ ! -e .extra ] ; then
@@ -101,8 +103,8 @@ if [ ! -e .extra ] ; then
 else
     echo .xtra file found
 fi
-#nano .osx
-#./.osx
+nano .osx
+./.osx
 #./.brew
 #./.iTerm2
 

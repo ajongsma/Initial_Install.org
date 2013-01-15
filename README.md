@@ -122,3 +122,7 @@ Add terminal shortcut:
 ## Solarized
 
 Install [Solarized](http://ethanschoonover.com/solarized)
+
+## SequelPro
+Install [Sequel Pro](http://www.sequelpro.com)
+

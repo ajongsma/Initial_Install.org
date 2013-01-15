@@ -121,7 +121,9 @@ nano .osx
 #cd ~/src
 #wget https://distfiles.macports.org/MacPorts/MacPorts-2.1.2-10.8-MountainLion.pkg
 # -> install MacPorts
+# -> Accept License agreement the hard way if needed via: sudo xcodebuild -license
 #sudo port selfupdate
+#sudo port upgrade outdated
 
 ## --- macports.org section ---
 #sudo port version>/dev/null

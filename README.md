@@ -42,7 +42,7 @@ When setting up a new Mac, you may want to set some sensible OS X defaults:
 
 ---
 
-Other info:
+Info:
 ===
 Startup keys (http://support.apple.com/kb/HT1533?viewlocale=en_US&locale=en_US).
 
@@ -62,3 +62,60 @@ On an Apple Wireless Keyboard you might have to wait until the startup chime bef
 
 Information about the Bash prompts:
 - http://blog.sanctum.geek.nz/bash-prompts/
+
+
+Other:
+===
+## Setup Dropbox
+
+Copy Dropbox folder from previous drive to user folder
+
+Install [Dropbox](https://www.dropbox.com)
+
+## Setup 1Password:
+
+Install [1Password](https://agilebits.com/onepassword/mac)
+
+Tell it to use the existing file in your Dropbox
+
+Install Browser Extensions
+
+Preferences > Security: Lock after 480 minutes of computer inactivity
+
+Preferences > Security > Lock when sleeping: Off
+
+Preferences > Security > Lock when screen saver is active: Off
+
+Preferences > Security > Disable automatic unlock for 1Password: Off
+
+Preferences > Logins: Submit Automatically after filling a login: On
+
+## Setup SublimeText:
+
+Install [SublimeText](http://www.sublimetext.com/2)
+
+Install [Sublime Package Control](http://wbond.net/sublime_packages/package_control/installation) 
+
+Install Soda Theme via Package Control
+
+Install Emmet via Package Control
+
+Install CoffeeScript via Package Control
+
+Install Gist via Package Control
+
+Create symlinks for preferences:
+`ln -s -f /Users/cmalven/Dropbox/Config/sublime-text/Preferences.sublime-settings /Users/cmalven/Library/Application\ Support/Sublime\ Text\ 2/Packages/User`
+
+Create symlinks for key-bindings:
+`ln -s -f /Users/cmalven/Dropbox/Config/sublime-text/Default\ \(OSX\).sublime-keymap /Users/cmalven/Library/Application\ Support/Sublime\ Text\ 2/Packages/User`
+
+Create symlinks for color scheme:
+`ln -s -f /Users/cmalven/Dropbox/Config/sublime-text/Solarized\ \(dark\).tmTheme /Users/cmalven/Library/Application\ Support/Sublime\ Text\ 2/Packages/User`
+
+Create symlinks for snippets:
+`ln -s /Users/cmalven/Dropbox/Config/sublime-text/snippets /Users/cmalven/Library/Application\ Support/Sublime\ Text\ 2/Packages/User`
+
+Add terminal shortcut:
+`ln -s /Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl /usr/local/bin/subl`
+

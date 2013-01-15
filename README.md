@@ -53,3 +53,6 @@ On an Apple Wireless Keyboard you might have to wait until the startup chime bef
 - ⌥N starts from a NetBoot server using the default boot image
 - ⌥⌘PR resets PRAM and NVRAM
 - vHolding eject, F12, or a button on a pointing device ejects removable media (like optical disks)
+
+Information about the Bash prompts:
+- http://blog.sanctum.geek.nz/bash-prompts/

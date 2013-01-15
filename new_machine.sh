@@ -165,6 +165,8 @@ nano .osx
 #else
 #    echo "macports not found, skipped macports tools install"
 #fi
+
+#sudo port install Pallet
 ###### TESTING - MACPORTS ###### END
 
 ###### TESTING - ADDENDUM CODE 1 ###### START

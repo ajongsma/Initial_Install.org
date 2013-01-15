@@ -141,6 +141,19 @@ fi
 #sudo git clone https://git.gitorious.org/gitorious/mainline.git /var/www/gitorious
 #sudo chown -R $SYSADMIN:gitorious /var/www/gitorious
 #sudo chmod -R g+sw /var/www/gitorious
+#
+#sudo cat > test.txt << EOF
+#production:
+#    adapter: stomp
+#EOF
+#
+#cat | text.txt << EOF
+#user = User.first
+#user.login = "$SYSADMIN"
+#user.activate
+#user.accept_terms
+#user.save
+#EOF
 
 ###### TESTING - ADDENDUM CODE 1 ###### END
 

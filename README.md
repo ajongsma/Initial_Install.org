@@ -119,3 +119,6 @@ Create symlinks for snippets:
 Add terminal shortcut:
 `ln -s /Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl /usr/local/bin/subl`
 
+## Solarized
+
+Install [Solarized](http://ethanschoonover.com/solarized)

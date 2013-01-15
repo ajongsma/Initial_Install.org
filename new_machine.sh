@@ -18,6 +18,13 @@ SYSADMIN_EMAIL=git@$GITORIOUS_HOST
 SYSADMIN_PASSWORD=password
 
 #------------------------------------------------------------------------------
+# VARIABLES
+#------------------------------------------------------------------------------
+
+# this is required in order be able to build many packages because Xcode4 dropped `ppc` architecture
+export ARCHFLAGS='-arch i386 -arch x86_64'
+
+#------------------------------------------------------------------------------
 # CUSTOM FUNCTION
 #------------------------------------------------------------------------------
 
@@ -109,6 +116,49 @@ nano .osx
 #./.iTerm2
 
 #./bootstrap.sh
+
+###### TESTING - MACPORTS ###### START
+## --- macports.org section ---
+#sudo port version>/dev/null
+#RETVAL=$?
+#if [ $RETVAL -eq 0 ] ; then
+# echo "macports detected, running..."
+# sudo port install wine mc wget
+# # shedule macports to update regulately - better in background instead of wasting time later
+#sudo sh -c "cat >/System/Library/LaunchDaemons/org.macports.portupdate" <<DELIM
+#<?xml version="1.0" encoding="UTF-8"?>
+#<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+#<plist version="1.0">
+#<dict>
+#        <key>RunAtLoad</key>  
+#        <false/>
+#        <key>KeepAlive</key>
+#        <false/>
+#        <key>Label</key>
+#        <string>org.macports.portupdate</string>
+#        <key>ProgramArguments</key>
+#        <array>
+# 	<string>/bin/bash</string>
+#		<string>-c</string>
+#		<string>port update;</string>
+#		<string>port upgrade obsolete</string>
+#        </array>
+#        <key>StartCalendarInterval</key>
+#        <dict>
+#            <key>Hour</key>
+#            <integer>5</integer>
+#            <key>Minute</key>
+#            <integer>10</integer>
+#       </dict>
+#</dict>
+#</plist>
+#DELIM
+# 
+#sudo launchctl load -w /System/Library/LaunchDaemons/org.macports.portupdate 2>/dev/null
+#else
+#    echo "macports not found, skipped macports tools install"
+#fi
+###### TESTING - MACPORTS ###### END
 
 ###### TESTING - ADDENDUM CODE 1 ###### START
 ## MySQL

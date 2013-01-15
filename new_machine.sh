@@ -59,6 +59,9 @@ cd Initial_Install
 # Install iTerm2
 ./install_iTerm2
 
+## reload settings for changes to be taken into account
+#source ~/.bashrc
+
 # Install a broomed version of Ruby enviroment
 # https://github.com/sstephenson/rbenv
 ./install_rbenv

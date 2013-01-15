@@ -33,6 +33,12 @@ else
     echo Xcode found
 fi
 
+while ( [ ! -e /Applications/Xcode.app ] )
+    echo Waiting for Xcode install...
+    sleep 15
+end
+
+
 # TESTING - require instead of specific chars
 require 'gcc'
 #gcc_versionlong=`gcc --version`

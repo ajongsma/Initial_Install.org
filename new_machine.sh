@@ -10,12 +10,12 @@
 # SETTINGS
 #------------------------------------------------------------------------------
  
-MYSQL_ROOT_PASSWORD=password
-MYSQL_GITORIOUS_PASSWORD=password
-GITORIOUS_HOST=gitorious
-SYSADMIN=sysadmin
-SYSADMIN_EMAIL=git@$GITORIOUS_HOST
-SYSADMIN_PASSWORD=password
+#MYSQL_ROOT_PASSWORD=password
+#MYSQL_GITORIOUS_PASSWORD=password
+#GITORIOUS_HOST=gitorious
+#SYSADMIN=sysadmin
+#SYSADMIN_EMAIL=git@$GITORIOUS_HOST
+#SYSADMIN_PASSWORD=password
 
 #------------------------------------------------------------------------------
 # VARIABLES
@@ -23,6 +23,35 @@ SYSADMIN_PASSWORD=password
 
 # this is required in order be able to build many packages because Xcode4 dropped `ppc` architecture
 export ARCHFLAGS='-arch i386 -arch x86_64'
+
+#------------------------------------------------------------------------------
+# USER INPUT
+#------------------------------------------------------------------------------
+
+set userCanceled to false
+try
+    set dialogResult to display dialog ¬
+        "MySQL Root password ?" buttons {"Cancel", "OK"} ¬
+        default button "OK" cancel button "Cancel" ¬
+        giving up after 15 ¬
+        default answer (long user name of (system info))
+on error number -128
+    set userCanceled to true
+end try
+ 
+if userCanceled then
+    -- statements to execute when user cancels
+    display dialog "User cancelled."
+else if gave up of dialogResult then
+    -- statements to execute if dialog timed out without an answer
+    display dialog "User timed out."
+else if button returned of dialogResult is "OK" then
+    set MYSQL_ROOT_PASSWORD to text returned of dialogResult
+    -- statements to process user name
+    display dialog "MySQL Password: " & MYSQL_ROOT_PASSWORD
+end if
+end
+
 
 #------------------------------------------------------------------------------
 # CUSTOM FUNCTION
@@ -63,7 +92,7 @@ if [ ! -e /Applications/Xcode.app ] ; then
   
     echo Xcode not installed, please install...
     sleep 15
-    quit
+#    quit
 else
     echo Xcode found
 fi

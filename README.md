@@ -96,6 +96,8 @@ Install [SublimeText](http://www.sublimetext.com/2)
 
 Install [Sublime Package Control](http://wbond.net/sublime_packages/package_control/installation) 
 
+Install [extra themes](https://github.com/daylerees/colour-schemes)
+
 Install Soda Theme via Package Control
 
 Install Emmet via Package Control
